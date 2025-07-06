@@ -40,7 +40,7 @@ def get_llm_client() -> BaseChatModel:
         if not api_key:
             raise ValueError("GOOGLE_API_KEY environment variable not set.")
         return ChatGoogleGenerativeAI(
-            model=model_name or "gemini-pro",
+            model=model_name or "gemini-2.0-flash",
             google_api_key=api_key,
         )
 

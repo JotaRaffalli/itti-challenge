@@ -9,7 +9,7 @@ show_missing = true
 [tool.pytest.ini_options]
 addopts = """
  --cov
- --cov-report html:'../../coverage/apps/itti-backend/html'
+ --cov-report html:'../../coverage/apps
  --cov-report xml:'../../coverage/apps/itti-backend/coverage.xml'
  --html='../../reports/apps/itti-backend/unittests/html/index.html'
  --junitxml='../../reports/apps/itti-backend/unittests/junit.xml'
@@ -25,9 +25,18 @@ dependencies = [
   "fastapi>=0.104.0",
   "uvicorn[standard]>=0.24.0",
   "pydantic>=2.5.0",
+  "pydantic-settings>=2.0.0",
   "langchain>=0.3.26",
-  "langchain-openai>=0.3.27",
+  "langchain-google-genai>=0.0.9",
+  "langgraph>=0.0.20",
+  "langsmith>=0.1.0",
   "python-dotenv>=1.0.0",
+  "requests>=2.32.4",
+  "numpy>=2.0.2",
+  "pandas>=2.3.0",
+  "sentence-transformers>=5.0.0",
+  "langchain-openai>=0.3.27",
+  "langchain-core>=0.3.68",
 ]
 
 [tool.hatch.build.targets.wheel]

@@ -6,6 +6,8 @@ from typing import Annotated
 
 from fastapi import Depends, FastAPI, HTTPException
 
+# Import VuelaConNosotros components
+from .api import chatbot_routes
 from .models.fintech_models import BotResponse, CustomerQuery, FullEvaluationReport
 from .services.evaluator import SemanticEvaluator, SimpleEvaluator
 from .services.prompt_service import PromptService
@@ -20,6 +22,10 @@ app = FastAPI(
     ),
     version="2.0.0",
 )
+
+# --- VuelaConNosotros Chatbot Router ---
+app.include_router(chatbot_routes.router, prefix="/vuelaconnosotros")
+
 
 # --- Logging Configuration ---
 logging.basicConfig(
