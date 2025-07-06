@@ -9,23 +9,21 @@ from pydantic import BaseModel, Field, validator
 class ProductType(str, Enum):
     """Types of financial products."""
 
-    DEBIT_CARD = "debit_card"
-    CREDIT_CARD = "credit_card"
-    LOAN = "loan"
-    NO_APLICA = "no_aplica"
+    DEBIT_CARD = "DEBIT_CARD"
+    CREDIT_CARD = "CREDIT_CARD"
+    LOAN = "LOAN"
+    UNKNOWN = "UNKNOWN"
 
 
 class QueryIntent(str, Enum):
     """Intent classification for customer queries."""
 
-    BENEFITS = "consultar_beneficios"
-    REQUIREMENTS = "consultar_requisitos"
-    FEES_RATES = "consultar_costos_tasas"
-    APPLICATION_PROCESS = "consultar_proceso_solicitud"
-    GENERAL = "consulta_general"
-    GREETING = "saludo"
-    FAREWELL = "finalizar_conversacion"
-    OTRO = "otro"
+    BENEFITS = "BENEFITS"
+    REQUIREMENTS = "REQUIREMENTS"
+    FEES_RATES = "FEES_RATES"
+    APPLICATION_PROCESS = "APPLICATION_PROCESS"
+    GENERAL = "GENERAL"
+    OTHER = "OTHER"
 
 
 class ExtractedData(BaseModel):
@@ -57,20 +55,20 @@ class ExtractedData(BaseModel):
     def map_intent(cls, v):
         """Map raw string from LLM to QueryIntent enum."""
         if isinstance(v, str):
-            v = v.lower().strip().replace(" ", "_")
+            v = v.upper().strip()  # Convert to uppercase to match enum values
         return (
-            QueryIntent(v) if v in QueryIntent._value2member_map_ else QueryIntent.OTRO
+            QueryIntent(v) if v in QueryIntent._value2member_map_ else QueryIntent.OTHER
         )
 
     @validator("product", pre=True, allow_reuse=True)
     def map_product(cls, v):
         """Map raw string from LLM to ProductType enum."""
         if isinstance(v, str):
-            v = v.lower().strip().replace(" ", "_")
+            v = v.upper().strip()  # Convert to uppercase to match enum values
         return (
             ProductType(v)
             if v in ProductType._value2member_map_
-            else ProductType.NO_APLICA
+            else ProductType.UNKNOWN
         )
 
 

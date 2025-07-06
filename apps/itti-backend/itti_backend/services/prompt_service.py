@@ -93,9 +93,7 @@ class PromptService:
             content = response.content
 
             if not isinstance(content, str):
-                err_msg = (
-                    f"Expected string response from LLM, but got {type(content)}"
-                )
+                err_msg = f"Expected string response from LLM, but got {type(content)}"
                 raise TypeError(err_msg)
 
             logger.info(f"Received response from LLM: {content}")
@@ -103,7 +101,6 @@ class PromptService:
             # Extract structured data and reasoning
             json_data = self._extract_json_from_response(content)
             reasoning = self._extract_reasoning(content)
-
             if not json_data:
                 # Fallback if JSON extraction fails
                 return BotResponse(
@@ -129,13 +126,16 @@ class PromptService:
                     confidence=0.0,
                 )
 
+            # The user-facing response is now composed of the response and next steps
+            final_response_text = f"{extracted_data.response}\n\n**Próximos Pasos:**\n{extracted_data.next_steps}"
+
             return BotResponse(
                 original_query=query.message,
-                response_text=extracted_data.response,
+                response_text=final_response_text,
                 detected_intent=extracted_data.intent,
                 detected_product=extracted_data.product,
                 confidence=extracted_data.confidence,
-                reasoning=reasoning,
+                reasoning=reasoning or "No reasoning provided.",
             )
 
         except Exception as e:
