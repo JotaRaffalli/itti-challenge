@@ -1,0 +1,93 @@
+{
+  "name": "data-analysis",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "notebooks/data-analysis/data_analysis",
+  "targets": {
+    "lock": {
+      "executor": "@nxlv/python:lock",
+      "options": {
+        "update": false
+      }
+    },
+    "sync": {
+      "executor": "@nxlv/python:sync",
+      "options": {}
+    },
+    "add": {
+      "executor": "@nxlv/python:add",
+      "options": {}
+    },
+    "update": {
+      "executor": "@nxlv/python:update",
+      "options": {}
+    },
+    "remove": {
+      "executor": "@nxlv/python:remove",
+      "options": {}
+    },
+    "build": {
+      "executor": "@nxlv/python:build",
+      "outputs": ["{projectRoot}/dist"],
+      "options": {
+        "outputPath": "{projectRoot}/dist",
+        "publish": false,
+        "lockedVersions": true,
+        "bundleLocalDependencies": true
+      },
+      "cache": true
+    },
+    "lint": {
+      "executor": "@nxlv/python:ruff-check",
+      "outputs": [],
+      "options": {
+        "lintFilePatterns": ["data_analysis"]
+      },
+      "cache": true
+    },
+    "format": {
+      "executor": "@nxlv/python:ruff-format",
+      "outputs": [],
+      "options": {
+        "filePatterns": ["data_analysis"]
+      },
+      "cache": true
+    },
+    "install": {
+      "executor": "@nxlv/python:install",
+      "options": {
+        "silent": false,
+        "args": "",
+        "verbose": false,
+        "debug": false
+      }
+    },
+    "jupyter": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "uv run jupyter lab --port=8888 --no-browser --allow-root",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "notebook": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "uv run jupyter notebook --port=8889 --no-browser --allow-root",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "convert-notebooks": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "uv run jupyter nbconvert --to html *.ipynb",
+        "cwd": "{projectRoot}"
+      }
+    }
+  },
+  "tags": ["notebooks", "data-science"],
+  "release": {
+    "version": {
+      "generator": "@nxlv/python:release-version"
+    }
+  }
+}
