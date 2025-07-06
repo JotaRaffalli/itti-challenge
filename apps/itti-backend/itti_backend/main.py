@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException
 from langchain_core.language_models.chat_models import BaseChatModel
 
+from .api import chatbot_routes
+
 # Correct relative imports
 from .models.fintech_models import (
     BotResponse,
@@ -33,6 +35,10 @@ app = FastAPI(
     version="2.0.0",
 )
 
+# --- VuelaConNosotros Chatbot Router ---
+app.include_router(chatbot_routes.router, prefix="/vuelaconnosotros")
+
+
 # --- Logging Configuration ---
 logging.basicConfig(
     level=logging.INFO,
@@ -49,7 +55,7 @@ def get_llm() -> BaseChatModel:
 
 
 def get_prompt_service(
-    llm: Annotated[BaseChatModel, Depends(get_llm)]
+    llm: Annotated[BaseChatModel, Depends(get_llm)],
 ) -> PromptService:
     """Provides an instance of the PromptService."""
     return PromptService(llm_client=llm)
@@ -64,9 +70,7 @@ def get_evaluator(
 
 # --- Type Hinting for Dependencies ---
 PromptServiceDep = Annotated[PromptService, Depends(get_prompt_service)]
-ComprehensiveEvaluatorDep = Annotated[
-    ComprehensiveEvaluator, Depends(get_evaluator)
-]
+ComprehensiveEvaluatorDep = Annotated[ComprehensiveEvaluator, Depends(get_evaluator)]
 
 
 # --- API Endpoints ---
