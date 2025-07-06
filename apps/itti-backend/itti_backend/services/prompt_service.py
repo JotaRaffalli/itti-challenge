@@ -7,10 +7,10 @@ from pathlib import Path
 from typing import Optional
 
 from dotenv import load_dotenv
+from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.messages import HumanMessage, SystemMessage
 
 from ..models.fintech_models import BotResponse, CustomerQuery, ExtractedData
-from .llm_service import get_llm_client
 
 # Load environment variables
 load_dotenv()
@@ -23,28 +23,24 @@ logger = logging.getLogger(__name__)
 class PromptService:
     """Service for prompt engineering with real LLM integration."""
 
-    def __init__(self):
+    def __init__(self, llm_client: BaseChatModel):
         """Initialize the prompt service with a LangChain LLM client."""
         try:
-            self.llm = get_llm_client()
+            self.llm_client = llm_client
             self.system_prompt = self._load_system_prompt()
-            logger.info(
-                "LLM client initialized successfully using %s",
-                self.llm.__class__.__name__,
-            )
+            logger.info("PromptService initialized successfully.")
         except (ValueError, FileNotFoundError) as e:
-            logger.error(f"Error initializing PromptService: {e}")
+            logger.error(f"Failed to initialize PromptService: {e}")
             raise
 
     def _load_system_prompt(self) -> str:
         """Loads the system prompt from the XML file."""
         try:
-            # Using pathlib for robust path handling
             prompt_path = Path(__file__).parent.parent / "prompts" / "system_prompt.xml"
             with open(prompt_path, encoding="utf-8") as f:
                 return f.read()
         except FileNotFoundError:
-            logger.error("System prompt file not found.")
+            logger.error(f"System prompt file not found at {prompt_path}")
             raise
         except Exception as e:
             logger.error(f"Error loading system prompt: {e}")
@@ -89,7 +85,7 @@ class PromptService:
 
         try:
             logger.info(f"Sending query to LLM: {query.text}")
-            response = self.llm.invoke(messages)
+            response = self.llm_client.invoke(messages)
             content = response.content
 
             if not isinstance(content, str):

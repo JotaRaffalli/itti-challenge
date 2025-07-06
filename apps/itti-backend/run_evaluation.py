@@ -31,6 +31,14 @@ def run_evaluation():
             # Parse and print the JSON response
             report = response.json()
 
+            # --- Save report to disk ---
+            timestamp = time.strftime("%Y%m%d_%H%M%S")
+            report_filename = f"evaluation_report_{timestamp}.json"
+            with open(report_filename, "w", encoding="utf-8") as f:
+                json.dump(report, f, ensure_ascii=False, indent=4)
+            print(f"\n📄 Reporte guardado en: {report_filename}")
+            # --- End save report ---
+
             # Print summary metrics
             summary = report.get("summary_metrics", {})
             print("\n📊 RESUMEN DE MÉTRICAS:")

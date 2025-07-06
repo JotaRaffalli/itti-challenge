@@ -2,10 +2,12 @@
 
 import logging
 import sys
+from functools import lru_cache
 from typing import Annotated
 
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException
+from langchain_core.language_models.chat_models import BaseChatModel
 
 # Correct relative imports
 from .models.fintech_models import (
@@ -14,6 +16,7 @@ from .models.fintech_models import (
     FullEvaluationReport,
 )
 from .services.comprehensive_evaluator import ComprehensiveEvaluator
+from .services.llm_service import get_llm_client
 from .services.prompt_service import PromptService
 
 # Load environment variables from .env file
@@ -39,19 +42,31 @@ logging.basicConfig(
 
 
 # --- Dependency Injection ---
-def get_prompt_service():
-    """Provides a singleton instance of the PromptService."""
-    return PromptService()
+@lru_cache
+def get_llm() -> BaseChatModel:
+    """Provides a cached singleton instance of the LLM client."""
+    return get_llm_client()
 
 
-def get_evaluator():
-    """Provides a singleton instance of the ComprehensiveEvaluator."""
-    return ComprehensiveEvaluator()
+def get_prompt_service(
+    llm: Annotated[BaseChatModel, Depends(get_llm)]
+) -> PromptService:
+    """Provides an instance of the PromptService."""
+    return PromptService(llm_client=llm)
+
+
+def get_evaluator(
+    llm: Annotated[BaseChatModel, Depends(get_llm)],
+) -> ComprehensiveEvaluator:
+    """Provides an instance of the ComprehensiveEvaluator."""
+    return ComprehensiveEvaluator(llm_client=llm)
 
 
 # --- Type Hinting for Dependencies ---
 PromptServiceDep = Annotated[PromptService, Depends(get_prompt_service)]
-ComprehensiveEvaluatorDep = Annotated[ComprehensiveEvaluator, Depends(get_evaluator)]
+ComprehensiveEvaluatorDep = Annotated[
+    ComprehensiveEvaluator, Depends(get_evaluator)
+]
 
 
 # --- API Endpoints ---
@@ -92,19 +107,19 @@ async def chat_endpoint(query: CustomerQuery, prompt_service: PromptServiceDep):
     response_model=FullEvaluationReport,
     summary="Run a single evaluation",
 )
-def run_single_evaluation(
-    query: CustomerQuery,
-    prompt_service: PromptServiceDep,
-    evaluator: ComprehensiveEvaluatorDep,
+async def run_single_evaluation(
+    query: CustomerQuery, evaluator: ComprehensiveEvaluatorDep
 ):
-    """Runs a comprehensive evaluation on a single query."""
+    """Runs a single evaluation and returns the report."""
     try:
+        # This endpoint requires a prompt_service instance to generate the response
+        # before evaluating it. We can get it from the dependency system.
+        prompt_service = get_prompt_service(llm=evaluator.llm_client)
         bot_response = prompt_service.generate_response(query)
-        result = evaluator.evaluate_single_response(query, bot_response)
-        report = evaluator.generate_report([result])
-        return report
+        evaluation_result = evaluator.evaluate_single_response(query, bot_response)
+        return evaluator.generate_report([evaluation_result])
     except Exception as e:
-        logging.error(f"Error during single evaluation: {e}")
+        logging.error(f"Error in single evaluation endpoint: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error") from e
 
 
@@ -114,21 +129,16 @@ def run_single_evaluation(
     response_model=FullEvaluationReport,
     summary="Run full evaluation on the dataset",
 )
-async def run_full_evaluation(
+async def run_full_evaluation_endpoint(
     evaluator: ComprehensiveEvaluatorDep, prompt_service: PromptServiceDep
 ):
-    """
-    Triggers a full evaluation of the chatbot using the predefined dataset.
-    This is a long-running process.
-    """
+    """Runs a full evaluation on the dataset and returns the report."""
     try:
-        logging.info("Starting full dataset evaluation...")
-        # Pass the prompt_service to the evaluator
-        report = await evaluator.run_full_evaluation(prompt_service)
-        logging.info("Full dataset evaluation completed.")
+        # Ensure both services use the same LLM instance
+        report = await evaluator.run_full_evaluation(prompt_service=prompt_service)
         return report
     except Exception as e:
-        logging.error(f"Error during full evaluation: {e}")
+        logging.error(f"Error in full evaluation endpoint: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error") from e
 
 

@@ -41,23 +41,13 @@ class ComprehensiveEvaluator:
     A unified evaluator that combines semantic, intent, and advanced quality metrics.
     """
 
-    def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
-        """
-        Initializes the ComprehensiveEvaluator.
-
-        Args:
-            model_name (str): The name of the sentence-transformer model to use.
-        """
-        try:
-            self.model = SentenceTransformer(model_name)
-            self.dataset = self._load_dataset()
-            logger.info(
-                f"SentenceTransformer model '{model_name}' loaded successfully."
-            )
-            logger.info(f"Evaluation dataset loaded with {len(self.dataset)} records.")
-        except Exception as e:
-            logger.error(f"Failed to initialize ComprehensiveEvaluator: {e}")
-            raise
+    def __init__(self, llm_client, model_name: str = "all-MiniLM-L6-v2"):
+        """Initialize the evaluator with a SentenceTransformer model and LLM client."""
+        logger.info(f"Loading SentenceTransformer model: {model_name}")
+        self.model = SentenceTransformer(model_name)
+        self.llm_client = llm_client  # Use the injected LLM client
+        self.dataset = self._load_dataset()
+        logger.info("ComprehensiveEvaluator initialized.")
 
     def _load_dataset(self) -> pd.DataFrame:
         """Loads the evaluation dataset from the specified path."""
