@@ -18,12 +18,20 @@ class Settings(BaseSettings):
         LANGCHAIN_API_KEY (str): API key for LangSmith.
         LANGCHAIN_TRACING_V2 (bool): Enables LangSmith tracing.
         LANGCHAIN_PROJECT (str): The project name for LangSmith tracing.
+        LLM_PROVIDER (str): The LLM provider to use.
+        LANGSMITH_TRACING (bool): Enables LangSmith tracing (alternative).
+        LANGSMITH_ENDPOINT (str): LangSmith API endpoint.
     """
 
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
     LANGCHAIN_API_KEY: str = os.getenv("LANGCHAIN_API_KEY", "")
     LANGCHAIN_TRACING_V2: bool = True
     LANGCHAIN_PROJECT: str = "VuelaConNosotros-Demo"
+    LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "gemini")
+    LANGSMITH_TRACING: bool = os.getenv("LANGSMITH_TRACING", "false").lower() == "true"
+    LANGSMITH_ENDPOINT: str = os.getenv(
+        "LANGSMITH_ENDPOINT", "https://api.smith.langchain.com"
+    )
 
     class Config:
         """Pydantic configuration."""
@@ -39,3 +47,5 @@ settings = Settings()
 os.environ["LANGCHAIN_TRACING_V2"] = str(settings.LANGCHAIN_TRACING_V2)
 os.environ["LANGCHAIN_API_KEY"] = settings.LANGCHAIN_API_KEY
 os.environ["LANGCHAIN_PROJECT"] = settings.LANGCHAIN_PROJECT
+os.environ["LANGSMITH_TRACING"] = str(settings.LANGSMITH_TRACING)
+os.environ["LANGSMITH_ENDPOINT"] = settings.LANGSMITH_ENDPOINT

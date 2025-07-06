@@ -14,7 +14,7 @@ import uuid
 import requests
 
 # --- Configuration ---
-BASE_URL = "http://localhost:8003"
+BASE_URL = "http://localhost:8000"
 CHATBOT_ENDPOINT = f"{BASE_URL}/vuelaconnosotros/chat"
 API_HEALTH_ENDPOINT = f"{BASE_URL}/"
 
