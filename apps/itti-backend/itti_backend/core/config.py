@@ -23,11 +23,20 @@ class Settings(BaseSettings):
         LANGSMITH_ENDPOINT (str): LangSmith API endpoint.
     """
 
-    GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
+    # --- LLM Provider Settings ---
+    LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "gemini")
+    GEMINI_API_KEY: str = os.getenv("GOOGLE_API_KEY", "")
+    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
+
+    # --- Model Configuration ---
+    GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+    OPENAI_MODEL: str = os.getenv("OPENAI_MODEL", "gpt-4o")
+    TEMPERATURE: float = float(os.getenv("TEMPERATURE", 0.1))
+
+    # --- LangSmith Tracing (optional) ---
     LANGCHAIN_API_KEY: str = os.getenv("LANGCHAIN_API_KEY", "")
     LANGCHAIN_TRACING_V2: bool = True
     LANGCHAIN_PROJECT: str = "VuelaConNosotros-Demo"
-    LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "gemini")
     LANGSMITH_TRACING: bool = os.getenv("LANGSMITH_TRACING", "false").lower() == "true"
     LANGSMITH_ENDPOINT: str = os.getenv(
         "LANGSMITH_ENDPOINT", "https://api.smith.langchain.com"
@@ -36,6 +45,7 @@ class Settings(BaseSettings):
     class Config:
         """Pydantic configuration."""
 
+        extra = "ignore"  # Ignore extra fields from .env
         env_file = ".env"
         env_file_encoding = "utf-8"
 
