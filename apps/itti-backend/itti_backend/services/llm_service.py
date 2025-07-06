@@ -36,7 +36,6 @@ def get_llm_client() -> BaseChatModel:
 
     if provider == "gemini":
         api_key = os.environ.get("GOOGLE_API_KEY")
-        print(f"Using Google API key: {api_key}")
         if not api_key:
             raise ValueError("GOOGLE_API_KEY environment variable not set.")
         return ChatGoogleGenerativeAI(
@@ -45,10 +44,8 @@ def get_llm_client() -> BaseChatModel:
         )
 
     elif provider == "openai":
-        print(f"Using OpenAI model: {model_name or 'gpt-4-turbo'}")
         # Ensure the OpenAI API key is set
         api_key = os.environ.get("OPENAI_API_KEY")
-        print(f"Using OpenAI API key: {api_key}")
         if not api_key:
             raise ValueError("OPENAI_API_KEY environment variable not set.")
         return ChatOpenAI(model=model_name or "gpt-4-turbo", api_key=SecretStr(api_key))

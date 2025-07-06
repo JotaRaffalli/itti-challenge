@@ -1,112 +1,63 @@
-# ITTI Backend - Prompt Engineering Challenge
+# ITTI Backend - Prompt Engineering API
 
-## 🎯 Descripción
+## Descripción
 
-Backend FastAPI que implementa la **Parte 1** del challenge de prompt engineering para un bot fintech, usando **LangChain + OpenAI GPT** con evaluación automatizada.
+API desarrollada en FastAPI para un chatbot financiero que implementa técnicas de prompt engineering. Utiliza LangChain como orquestador y Google Gemini como modelo de lenguaje principal. El sistema incluye un framework de evaluación automatizada que mide métricas de precisión y calidad de respuesta.
 
-## 📋 Defensa Técnica Completa
+## Instalación
 
-> **Documento principal**: [`../../notebooks/data-analysis/challenge-genai-20250610.ipynb`](../../notebooks/data-analysis/challenge-genai-20250610.ipynb)
+### Prerrequisitos
 
-Este notebook contiene la defensa técnica completa con:
+- Python 3.11+
+- Una Google API Key
 
-- ✅ Explicación detallada de técnicas de prompt engineering
-- ✅ Dataset de evaluación y metodología
-- ✅ Análisis crítico de resultados
-- ✅ Instrucciones para ejecutar pruebas
+### Setup
 
-## ⚡ Ejecución Rápida
+1.  **Configurar variables de entorno:**
+    Desde la raíz del monorepo, crea una copia del archivo de ejemplo:
+    ```bash
+    cp apps/itti-backend/.env.example apps/itti-backend/.env
+    ```
+    A continuación, edita el archivo `apps/itti-backend/.env` y añade tu `GOOGLE_API_KEY`.
 
-### 1. Configurar API Key
+2.  **Instalar dependencias:**
+    Desde la raíz del monorepo, ejecuta el siguiente comando para instalar las dependencias del proyecto:
+    ```bash
+    nx install itti-backend
+    ```
 
+## Ejecución
+
+### Servidor de Desarrollo
+
+Para iniciar el servidor en modo de desarrollo, que se recarga automáticamente con los cambios, ejecuta:
 ```bash
-# Crear archivo .env
-cp .env.example .env
-# Editar .env con tu OPENAI_API_KEY
+nx serve itti-backend
 ```
+El servidor estará disponible en `http://localhost:8000`.
 
-### 2. Instalar y ejecutar
+### Evaluación Automatizada
 
+Para ejecutar el script que evalúa el sistema contra el dataset de pruebas, asegúrate de que el servidor esté corriendo y luego ejecuta:
 ```bash
-# Instalar dependencias
-pip install -e .
-
-# Iniciar servidor
-uvicorn itti_backend.main:app --reload
-
-# En otra terminal, ejecutar demo completo
-python test_demo.py
+python apps/itti-backend/run_evaluation.py
 ```
 
-## 🧪 Demo Automático
+## Endpoints Principales
 
-El script `test_demo.py` ejecuta:
+| Método | Endpoint | Descripción |
+| :--- | :--- | :--- |
+| `POST` | `/chat/process` | Procesa una consulta de un usuario y devuelve la respuesta del chatbot. |
+| `POST` | `/evaluation/run-full-dataset`| Ejecuta la evaluación completa del sistema contra el dataset definido. |
+| `GET` | `/docs` | Ofrece la documentación interactiva de la API (Swagger UI). |
 
-- ✅ **10 casos de prueba** del dataset de evaluación
-- ✅ **Métricas automatizadas** (Estructura, Empatía, Detección, Confianza)
-- ✅ **Análisis de rendimiento** con resultados detallados
+## Arquitectura
 
-```bash
-python test_demo.py
-```
-
-## 📡 API Principal
-
-#### Endpoint de Testing con Evaluación
-
-```http
-POST /prompt/test
-Content-Type: application/json
-
-{
-    "message": "¿Cuáles son los beneficios de la tarjeta de crédito?",
-    "include_evaluation": true
-}
-```
-
-#### Respuesta con Métricas
-
-```json
-{
-  "query": {...},
-  "response": {
-    "reasoning": "El cliente consulta sobre beneficios...",
-    "answer": "La Tarjeta de Crédito ITTI ofrece...",
-    "next_steps": "Te recomiendo contactar..."
-  },
-  "evaluation": {
-    "structure_score": 0.95,
-    "empathy_score": 0.88,
-    "product_detection_score": 1.0,
-    "confidence_score": 0.92,
-    "total_score": 0.94
-  }
-}
-```
-
-## 🏗️ Arquitectura Técnica
-
-- **FastAPI**: Framework web moderno
-- **LangChain**: Orquestador de LLM
-- **OpenAI GPT-3.5-turbo**: Modelo de lenguaje
-- **Pydantic**: Validación de datos
-- **Evaluator**: Sistema de métricas automáticas
-
-## 📊 Estructura del Código
-
-```
-itti_backend/
-├── main.py                    # API endpoints
-├── services/
-│   ├── prompt_service.py      # Prompt unificado + LangChain
-│   └── evaluator.py           # Sistema de evaluación
-├── models/
-│   └── fintech_models.py      # Modelos Pydantic
-└── data/
-    └── evaluation_dataset.py  # Dataset de pruebas
-```
-
-## 📖 Documentación Completa
-
-**Para la defensa técnica completa, metodología, análisis y conclusiones, revisar**:
-[`../../notebooks/data-analysis/challenge-genai-20250610.ipynb`](../../notebooks/data-analysis/challenge-genai-20250610.ipynb)
+-   **`main.py`**: Punto de entrada de la API con la definición de los endpoints de FastAPI.
+-   **`services/`**: Contiene la lógica de negocio desacoplada.
+    -   **`prompt_service.py`**: Se encarga de la construcción y gestión de los prompts dinámicos.
+    -   **`llm_service.py`**: Actúa como interfaz con el LLM a través de LangChain.
+    -   **`comprehensive_evaluator.py`**: Implementa el sistema de evaluación con métricas de calidad.
+-   **`models/`**: Define los modelos Pydantic para la validación estricta de los datos de entrada y salida.
+-   **`prompts/`**: Almacena las plantillas de los prompts en formato XML.
+-   **`data/`**: Contiene los datasets utilizados para la evaluación del sistema.

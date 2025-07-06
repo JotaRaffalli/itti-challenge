@@ -4,11 +4,20 @@ import logging
 import sys
 from typing import Annotated
 
+from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException
 
-from .models.fintech_models import BotResponse, CustomerQuery, FullEvaluationReport
-from .services.evaluator import SemanticEvaluator, SimpleEvaluator
+# Correct relative imports
+from .models.fintech_models import (
+    BotResponse,
+    CustomerQuery,
+    FullEvaluationReport,
+)
+from .services.comprehensive_evaluator import ComprehensiveEvaluator
 from .services.prompt_service import PromptService
+
+# Load environment variables from .env file
+load_dotenv()
 
 # --- App Configuration ---
 app = FastAPI(
@@ -30,17 +39,27 @@ logging.basicConfig(
 
 
 # --- Dependency Injection ---
-PromptServiceDep = Annotated[PromptService, Depends(PromptService)]
-SimpleEvaluatorDep = Annotated[SimpleEvaluator, Depends(SimpleEvaluator)]
-SemanticEvaluatorDep = Annotated[SemanticEvaluator, Depends(SemanticEvaluator)]
+def get_prompt_service():
+    """Provides a singleton instance of the PromptService."""
+    return PromptService()
+
+
+def get_evaluator():
+    """Provides a singleton instance of the ComprehensiveEvaluator."""
+    return ComprehensiveEvaluator()
+
+
+# --- Type Hinting for Dependencies ---
+PromptServiceDep = Annotated[PromptService, Depends(get_prompt_service)]
+ComprehensiveEvaluatorDep = Annotated[ComprehensiveEvaluator, Depends(get_evaluator)]
 
 
 # --- API Endpoints ---
 
 
-@app.get("/", tags=["General"])
-async def root():
-    """Root endpoint with service status and available endpoints."""
+@app.get("/", tags=["General"], summary="Root endpoint to check API status")
+def read_root():
+    """Returns a welcome message indicating the API is running."""
     return {
         "message": "ITTI Prompt Engineering Demo v2.0 - Running",
         "status": "healthy",
@@ -52,77 +71,65 @@ async def root():
     }
 
 
-@app.post("/chat", tags=["Interaction"], response_model=BotResponse)
+@app.post(
+    "/chat",
+    tags=["Interaction"],
+    response_model=BotResponse,
+    summary="Invoke the chatbot with a single query",
+)
 async def chat_endpoint(query: CustomerQuery, prompt_service: PromptServiceDep):
-    """Handles a single user interaction with the financial AI assistant."""
+    """Receives a customer query and returns the bot's response."""
     try:
         return prompt_service.generate_response(query)
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Error generating response: {e}"
-        ) from e
+        logging.error(f"Error in chat endpoint: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error") from e
 
 
-@app.post("/testing/run-single", tags=["Testing & Evaluation"])
-async def test_single_prompt(
+@app.post(
+    "/testing/run-single",
+    tags=["Testing & Evaluation"],
+    response_model=FullEvaluationReport,
+    summary="Run a single evaluation",
+)
+def run_single_evaluation(
     query: CustomerQuery,
     prompt_service: PromptServiceDep,
-    evaluator: SimpleEvaluatorDep,
+    evaluator: ComprehensiveEvaluatorDep,
 ):
-    """Tests a single query and provides a quick, heuristic evaluation."""
+    """Runs a comprehensive evaluation on a single query."""
     try:
-        response = prompt_service.generate_response(query)
-        evaluation = evaluator.evaluate_response(query, response)
-        return {"response": response, "evaluation": evaluation}
+        bot_response = prompt_service.generate_response(query)
+        result = evaluator.evaluate_single_response(query, bot_response)
+        report = evaluator.generate_report([result])
+        return report
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Error processing request: {e}"
-        ) from e
+        logging.error(f"Error during single evaluation: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error") from e
 
 
 @app.post(
     "/evaluation/run-full-dataset",
     tags=["Testing & Evaluation"],
     response_model=FullEvaluationReport,
-    summary="Run full semantic evaluation on the dataset",
+    summary="Run full evaluation on the dataset",
 )
 async def run_full_evaluation(
-    prompt_service: PromptServiceDep, evaluator: SemanticEvaluatorDep
+    evaluator: ComprehensiveEvaluatorDep, prompt_service: PromptServiceDep
 ):
     """
-    Processes the entire internal dataset, generates responses for each query,
-    and returns a full semantic evaluation report.
-
-    This endpoint is ideal for getting a comprehensive overview of the model's
-    performance on a predefined set of test cases.
+    Triggers a full evaluation of the chatbot using the predefined dataset.
+    This is a long-running process.
     """
     try:
         logging.info("Starting full dataset evaluation...")
-        # 1. Get all queries from the evaluator's dataset
-        dataset = evaluator.dataset
-        queries = [CustomerQuery(message=q) for q in dataset["query"]]
-
-        # 2. Generate responses for all queries
-        generated_responses: list[BotResponse] = []
-        for query in queries:
-            response = prompt_service.generate_response(query)
-            generated_responses.append(response)
-        logging.info(f"Generated {len(generated_responses)} responses.")
-
-        # 3. Evaluate the batch of responses
-        evaluation_report = evaluator.evaluate_batch(generated_responses)
-        logging.info("Batch evaluation complete.")
-
-        return evaluation_report
-
-    except FileNotFoundError as e:
-        logging.error(f"Evaluation dataset not found: {e}", exc_info=True)
-        raise HTTPException(status_code=404, detail=str(e)) from e
+        # Pass the prompt_service to the evaluator
+        report = await evaluator.run_full_evaluation(prompt_service)
+        logging.info("Full dataset evaluation completed.")
+        return report
     except Exception as e:
-        logging.error(f"An unexpected error occurred: {e}", exc_info=True)
-        raise HTTPException(
-            status_code=500, detail=f"An unexpected error occurred: {e}"
-        ) from e
+        logging.error(f"Error during full evaluation: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error") from e
 
 
 # To run the app locally: uvicorn itti_backend.main:app --reload

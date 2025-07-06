@@ -1,12 +1,12 @@
-"""Simple models for ITTI backend application."""
+"""Pydantic models for the ITTI Fintech Chatbot API."""
 
 from enum import Enum
 from typing import Optional
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field
 
 
-class ProductType(str, Enum):
+class Product(str, Enum):
     """Types of financial products."""
 
     DEBIT_CARD = "DEBIT_CARD"
@@ -15,7 +15,7 @@ class ProductType(str, Enum):
     UNKNOWN = "UNKNOWN"
 
 
-class QueryIntent(str, Enum):
+class Intent(str, Enum):
     """Intent classification for customer queries."""
 
     BENEFITS = "BENEFITS"
@@ -26,113 +26,97 @@ class QueryIntent(str, Enum):
     OTHER = "OTHER"
 
 
-class ExtractedData(BaseModel):
-    """Structured data extracted from the LLM response."""
-
-    intent: QueryIntent = Field(
-        ..., description="The classified intent of the user's query."
-    )
-    product: ProductType = Field(
-        ..., description="The specific product the user is asking about."
-    )
-    confidence: float = Field(
-        ...,
-        description="The confidence score (0.0 to 1.0) of the classification.",
-        ge=0.0,
-        le=1.0,
-    )
-    response: str = Field(
-        ...,
-        description=(
-            "The user-facing response, written in a helpful and empathetic tone."
-        ),
-    )
-    next_steps: str = Field(
-        ..., description="A clear and concise call to action for the user."
-    )
-
-    @validator("intent", pre=True, allow_reuse=True)
-    def map_intent(cls, v):
-        """Map raw string from LLM to QueryIntent enum."""
-        if isinstance(v, str):
-            v = v.upper().strip()  # Convert to uppercase to match enum values
-        return (
-            QueryIntent(v) if v in QueryIntent._value2member_map_ else QueryIntent.OTHER
-        )
-
-    @validator("product", pre=True, allow_reuse=True)
-    def map_product(cls, v):
-        """Map raw string from LLM to ProductType enum."""
-        if isinstance(v, str):
-            v = v.upper().strip()  # Convert to uppercase to match enum values
-        return (
-            ProductType(v)
-            if v in ProductType._value2member_map_
-            else ProductType.UNKNOWN
-        )
-
-
 class CustomerQuery(BaseModel):
-    """Customer query model."""
+    """Model for a customer's query, including ground truth for evaluation."""
 
-    message: str = Field(..., min_length=1, max_length=2000)
-    user_id: str = Field(default="anonymous")
+    customer_id: str = Field(default="anonymous", description="Unique ID for the user.")
+    text: str = Field(
+        ...,
+        min_length=1,
+        max_length=2000,
+        description="The user's query text.",
+    )
+    expected_intent: Optional[Intent] = Field(
+        None, description="The ground truth intent for evaluation."
+    )
+    expected_product: Optional[Product] = Field(
+        None, description="The ground truth product for evaluation."
+    )
+    ideal_response: Optional[str] = Field(
+        None, description="The ideal response for semantic comparison."
+    )
 
 
 class BotResponse(BaseModel):
-    """Bot response model."""
+    """Bot response model, containing the generated text and extracted data."""
 
     original_query: str
     response_text: str
-    detected_intent: Optional[QueryIntent] = None
-    detected_product: Optional[ProductType] = Field(
-        None, description="The detected product of the query."
+    detected_intent: Optional[Intent]
+    detected_product: Optional[Product]
+    confidence: float
+    reasoning: Optional[str] = None
+
+
+class ExtractedData(BaseModel):
+    """Model for structured data extracted from LLM responses."""
+
+    intent: Intent
+    product: Product
+    confidence: float = Field(
+        ge=0.0, le=1.0, description="Confidence score between 0 and 1"
     )
-    reasoning: Optional[str] = Field(
-        None, description="The reasoning behind the bot's response."
-    )
-    confidence: Optional[float] = Field(
-        None, description="The confidence score of the intent detection."
-    )
+    response: str = Field(description="The main response text")
+    next_steps: str = Field(description="Suggested next steps for the customer")
 
 
 class EvaluationResult(BaseModel):
-    """Simple evaluation result."""
+    """Comprehensive evaluation result for a single interaction."""
 
-    query: str
-    response: str
-    score: float
-    feedback: str
-    strengths: list[str] = Field(default_factory=list)
-    improvements: list[str] = Field(default_factory=list)
-
-
-class SummaryMetrics(BaseModel):
-    """Metrics for the full evaluation report."""
-
-    total_evaluated: int
-    intent_accuracy: Optional[float] = None
-    product_accuracy: Optional[float] = None
-    average_semantic_similarity: Optional[float] = None
-
-
-class DetailedResult(BaseModel):
-    """Detailed result for a single query in the evaluation report."""
-
+    # Core Details
     query: str
     generated_response: str
     ideal_response: str
-    semantic_similarity: Optional[float] = None
-    detected_intent: Optional[str] = None
-    expected_intent: Optional[str] = None
+
+    # Intent & Product Accuracy
+    detected_intent: Intent
+    expected_intent: Intent
     intent_correct: bool
-    detected_product: Optional[str] = None
-    expected_product: Optional[str] = None
+    detected_product: Product
+    expected_product: Product
     product_correct: bool
+
+    # Semantic & Confidence Metrics
+    semantic_similarity: float
+    is_semantically_similar: bool
+    confidence: float = 0.0
+    confidence_alignment: float = 0.0
+
+    # Advanced Quality Metrics (Likert-style)
+    empathy: float = 0.0
+    clarity: float = 0.0
+    actionability: float = 0.0
+    professional_tone: float = 0.0
+    readability: float = 0.0
+
+
+class SummaryMetrics(BaseModel):
+    total_evaluated: int
+    intent_accuracy: float
+    product_accuracy: float
+    average_semantic_similarity: float
+    average_confidence: float = 0.0
+    average_confidence_alignment: float = 0.0
+    average_empathy: float = 0.0
+    average_clarity: float = 0.0
+    average_actionability: float = 0.0
+    average_professional_tone: float = 0.0
+    average_readability: float = 0.0
 
 
 class FullEvaluationReport(BaseModel):
-    """Full evaluation report model."""
+    """The full report containing summary metrics and detailed results."""
 
     summary_metrics: SummaryMetrics
-    detailed_results: list[DetailedResult]
+    detailed_results: list[EvaluationResult]
+    logs: list[str] = []

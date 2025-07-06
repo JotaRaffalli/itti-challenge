@@ -28,6 +28,12 @@ dependencies = [
   "langchain>=0.3.26",
   "langchain-openai>=0.3.27",
   "python-dotenv>=1.0.0",
+  "textstat>=0.7.3",
+  "pandas>=2.3.0",
+  "sentence-transformers>=5.0.0",
+  "scikit-learn>=1.6.1",
+  "numpy>=2.0.2",
+  "langchain-google-genai>=2.1.6",
 ]
 
 [tool.hatch.build.targets.wheel]

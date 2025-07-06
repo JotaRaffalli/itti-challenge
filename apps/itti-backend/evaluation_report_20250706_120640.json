@@ -1,0 +1,194 @@
+{
+  "basic_evaluation": {
+    "summary_metrics": {
+      "total_evaluated": 8,
+      "intent_accuracy": 1.0,
+      "product_accuracy": 1.0,
+      "average_semantic_similarity": 0.8242412805557251
+    },
+    "detailed_results": [
+      {
+        "query": "Hola, quiero saber los beneficios de la tarjeta de débito",
+        "generated_response": "¡Hola! Con gusto te informo sobre los beneficios de nuestra Tarjeta de Débito ITTI. Disfrutarás de costo cero en cuota de manejo y transacciones, hasta 5 retiros gratuitos al mes en cajeros de nuestra red aliada, y seguridad avanzada con chip y notificaciones en tiempo real.\n\n**Próximos Pasos:**\nSi deseas solicitarla, puedes descargar nuestra app y completar el registro. ¡Es muy fácil! ¿Te gustaría conocer los requisitos para obtenerla?",
+        "ideal_response": "¡Hola! Qué bueno que te interese nuestra Tarjeta de Débito. Sus principales beneficios son: no tiene cuota de manejo, te permite hacer hasta 5 retiros gratis al mes en nuestra red aliada y cuenta con seguridad avanzada de chip y notificaciones en tiempo real.",
+        "semantic_similarity": 0.8832504153251648,
+        "detected_intent": "BENEFITS",
+        "expected_intent": "BENEFITS",
+        "intent_correct": true,
+        "detected_product": "DEBIT_CARD",
+        "expected_product": "DEBIT_CARD",
+        "product_correct": true
+      },
+      {
+        "query": "¿Qué necesito para pedir un préstamo personal?",
+        "generated_response": "¡Hola! Para solicitar nuestro Préstamo Personal, los requisitos principales son: tener ingresos mensuales demostrables desde $1,500,000 COP, ser empleado o independiente con más de 1 año de antigüedad y tener un buen historial crediticio.\n\n**Próximos Pasos:**\nSi cumples con estos requisitos, te invito a simular tu préstamo en línea. Es un proceso rápido y puedes ver las opciones de cuotas y plazos disponibles. ¿Te gustaría que te guíe en el proceso de simulación?",
+        "ideal_response": "¡Hola! Para solicitar nuestro Préstamo Personal, los requisitos principales son: tener ingresos demostrables desde $1,500,000 COP, más de un año de antigüedad laboral y un buen historial de crédito. ¿Te gustaría iniciar tu solicitud?",
+        "semantic_similarity": 0.8324356079101562,
+        "detected_intent": "REQUIREMENTS",
+        "expected_intent": "REQUIREMENTS",
+        "intent_correct": true,
+        "detected_product": "LOAN",
+        "expected_product": "LOAN",
+        "product_correct": true
+      },
+      {
+        "query": "¿Cuál es la tasa de interés de la tarjeta de crédito?",
+        "generated_response": "¡Hola! La tasa de interés de nuestra Tarjeta de Crédito es de 2.1% efectiva mensual.\n\n**Próximos Pasos:**\n¿Te gustaría saber algo más sobre los costos o beneficios de la tarjeta?",
+        "ideal_response": "¡Hola! La tasa de interés de nuestra Tarjeta de Crédito es del 2.1% efectiva mensual. Además, te contamos que puedes exonerar la cuota de manejo si facturas más de $800,000 COP en el mes.",
+        "semantic_similarity": 0.8201216459274292,
+        "detected_intent": "FEES_RATES",
+        "expected_intent": "FEES_RATES",
+        "intent_correct": true,
+        "detected_product": "CREDIT_CARD",
+        "expected_product": "CREDIT_CARD",
+        "product_correct": true
+      },
+      {
+        "query": "¿Cómo pido la tarjeta de crédito?",
+        "generated_response": "¡Hola! Para solicitar nuestra Tarjeta de Crédito, puedes hacerlo fácilmente a través de nuestra página web o directamente desde nuestra app. El proceso comienza con una pre-aprobación que toma solo 5 minutos. Luego, realizaremos un estudio de crédito y, si todo está en orden, recibirás tu tarjeta en un plazo de 5 a 7 días hábiles.\n\n**Próximos Pasos:**\n¿Te gustaría que te envíe el enlace directo a la solicitud en línea o prefieres descargar nuestra app? ¡Estoy aquí para ayudarte en cada paso!",
+        "ideal_response": "¡Hola! Solicitar tu Tarjeta de Crédito es muy fácil. Puedes hacerlo 100% en línea desde nuestra página web o app. La pre-aprobación toma solo 5 minutos. ¡Anímate a empezar!",
+        "semantic_similarity": 0.8992016315460205,
+        "detected_intent": "APPLICATION_PROCESS",
+        "expected_intent": "APPLICATION_PROCESS",
+        "intent_correct": true,
+        "detected_product": "CREDIT_CARD",
+        "expected_product": "CREDIT_CARD",
+        "product_correct": true
+      },
+      {
+        "query": "No entiendo la diferencia entre la tarjeta de débito y la de crédito, ¿me explicas?",
+        "generated_response": "¡Hola! Entiendo tu pregunta. La Tarjeta de Débito está directamente ligada a tu cuenta bancaria, por lo que usas fondos que ya tienes disponibles. En cambio, la Tarjeta de Crédito es un préstamo que te hace ITTI, con un cupo asignado, que debes pagar posteriormente.\n\n**Próximos Pasos:**\nSi quieres, puedo contarte más sobre los beneficios y requisitos específicos de cada una para que veas cuál se adapta mejor a tus necesidades. ¿Qué te parece?",
+        "ideal_response": "¡Hola! Claro que sí. La Tarjeta de Débito usa el dinero que ya tienes en tu cuenta, es ideal para compras del día a día. La Tarjeta de Crédito te da un cupo de dinero prestado por el banco para que lo uses y lo pagues después, es útil para compras grandes o para financiarte.",
+        "semantic_similarity": 0.7962141633033752,
+        "detected_intent": "GENERAL",
+        "expected_intent": "GENERAL",
+        "intent_correct": true,
+        "detected_product": "UNKNOWN",
+        "expected_product": "UNKNOWN",
+        "product_correct": true
+      },
+      {
+        "query": "¿Qué me dan si pido un préstamo de 10 millones?",
+        "generated_response": "¡Hola! Al solicitar un Préstamo Personal de 10 millones de pesos con ITTI Fintech, obtienes un desembolso rápido en menos de 24 horas después de la aprobación. Además, puedes elegir plazos de pago flexibles desde 12 hasta 48 meses. Y lo mejor, para este monto no necesitas codeudor.\n\n**Próximos Pasos:**\nPuedes simular las cuotas de tu préstamo en nuestra página web o app para que veas cómo se ajusta a tu presupuesto. ¿Te gustaría que te mostrara cómo hacerlo?",
+        "ideal_response": "¡Hola! Al solicitar un préstamo de $10,000,000 COP con nosotros, obtienes beneficios como desembolso en menos de 24 horas, plazos de pago flexibles de 12 a 48 meses y, para ese monto, no necesitas codeudor. ¿Quieres simular tu crédito?",
+        "semantic_similarity": 0.6711941957473755,
+        "detected_intent": "BENEFITS",
+        "expected_intent": "BENEFITS",
+        "intent_correct": true,
+        "detected_product": "LOAN",
+        "expected_product": "LOAN",
+        "product_correct": true
+      },
+      {
+        "query": "¿Cuál es el mejor restaurante de la ciudad?",
+        "generated_response": "¡Hola! Agradezco mucho tu pregunta. Como Álex, tu asistente financiero de ITTI, mi especialidad son nuestros productos como tarjetas y préstamos. No tengo información sobre restaurantes, pero si tienes alguna duda financiera, ¡estaré encantado de ayudarte!\n\n**Próximos Pasos:**\nPuedo contarte sobre los beneficios de nuestras tarjetas, los requisitos para un préstamo o cómo funciona nuestra app. ¿Qué te gustaría saber?",
+        "ideal_response": "¡Hola! Agradezco mucho tu pregunta. Como Álex, tu asistente financiero de ITTI, mi especialidad son nuestros productos como tarjetas y préstamos. No tengo información sobre restaurantes, pero si tienes alguna duda financiera, ¡estaré encantado de ayudarte!",
+        "semantic_similarity": 0.9330143928527832,
+        "detected_intent": "GENERAL",
+        "expected_intent": "GENERAL",
+        "intent_correct": true,
+        "detected_product": "UNKNOWN",
+        "expected_product": "UNKNOWN",
+        "product_correct": true
+      },
+      {
+        "query": "Quiero un préstamo pero mi historial de crédito no es bueno, ¿puedo aplicar?",
+        "generated_response": "¡Hola! Entiendo tu interés en nuestro Préstamo Personal. Un buen historial crediticio es uno de los requisitos importantes para la aprobación, ya que nos permite evaluar el riesgo y ofrecerte las mejores condiciones posibles. Sin embargo, te invito a simular tu préstamo en nuestra plataforma. En algunos casos, podemos ofrecer alternativas, aunque las tasas podrían ser diferentes.\n\n**Próximos Pasos:**\nTe sugiero realizar una simulación en línea con tus datos. Así podremos darte una respuesta más precisa sobre tus opciones. ¿Te gustaría que te guíe en el proceso de simulación?",
+        "ideal_response": "¡Hola! Entiendo tu situación. Uno de los requisitos para nuestros préstamos es tener un buen historial crediticio. Sin embargo, te invito a que completes la solicitud. Nuestro sistema analiza varios factores y podríamos encontrar una opción para ti. ¿Quieres intentarlo?",
+        "semantic_similarity": 0.7584978938102722,
+        "detected_intent": "REQUIREMENTS",
+        "expected_intent": "REQUIREMENTS",
+        "intent_correct": true,
+        "detected_product": "LOAN",
+        "expected_product": "LOAN",
+        "product_correct": true
+      }
+    ]
+  },
+  "advanced_evaluation": {
+    "sample_size": 8,
+    "average_metrics": {
+      "empathy_score": 0.34375,
+      "clarity_score": 1.0,
+      "actionability_score": 0.03125,
+      "professional_tone_score": 0.8999999999999999,
+      "readability_score": 0.6979972711767759,
+      "confidence_alignment": 0.875
+    },
+    "detailed_metrics": [
+      {
+        "empathy_score": 0.25,
+        "clarity_score": 1.0,
+        "actionability_score": 0.25,
+        "professional_tone_score": 0.95,
+        "readability_score": 0.6390173913043483,
+        "confidence_alignment": 1.0
+      },
+      {
+        "empathy_score": 0.25,
+        "clarity_score": 1.0,
+        "actionability_score": 0.0,
+        "professional_tone_score": 0.95,
+        "readability_score": 0.5889317922374431,
+        "confidence_alignment": 1.0
+      },
+      {
+        "empathy_score": 0.25,
+        "clarity_score": 1.0,
+        "actionability_score": 0.0,
+        "professional_tone_score": 0.85,
+        "readability_score": 0.8340833333333336,
+        "confidence_alignment": 1.0
+      },
+      {
+        "empathy_score": 0.5,
+        "clarity_score": 1.0,
+        "actionability_score": 0.0,
+        "professional_tone_score": 0.95,
+        "readability_score": 0.7541441767068278,
+        "confidence_alignment": 0.5
+      },
+      {
+        "empathy_score": 0.5,
+        "clarity_score": 1.0,
+        "actionability_score": 0.0,
+        "professional_tone_score": 0.85,
+        "readability_score": 0.8151265765765772,
+        "confidence_alignment": 1.0
+      },
+      {
+        "empathy_score": 0.25,
+        "clarity_score": 1.0,
+        "actionability_score": 0.0,
+        "professional_tone_score": 0.85,
+        "readability_score": 0.8775616033755275,
+        "confidence_alignment": 0.5
+      },
+      {
+        "empathy_score": 0.25,
+        "clarity_score": 1.0,
+        "actionability_score": 0.0,
+        "professional_tone_score": 0.85,
+        "readability_score": 0.33025,
+        "confidence_alignment": 1.0
+      },
+      {
+        "empathy_score": 0.5,
+        "clarity_score": 1.0,
+        "actionability_score": 0.0,
+        "professional_tone_score": 0.95,
+        "readability_score": 0.7448632958801501,
+        "confidence_alignment": 1.0
+      }
+    ]
+  },
+  "summary": {
+    "total_evaluated": 8,
+    "intent_accuracy": 1.0,
+    "product_accuracy": 1.0,
+    "semantic_similarity": 0.8242412805557251,
+    "empathy_score": 0.34375,
+    "clarity_score": 1.0,
+    "actionability_score": 0.03125
+  }
+}

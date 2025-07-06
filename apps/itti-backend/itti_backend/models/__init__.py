@@ -4,14 +4,20 @@ from .fintech_models import (
     BotResponse,
     CustomerQuery,
     EvaluationResult,
-    ProductType,
-    QueryIntent,
+    ExtractedData,
+    FullEvaluationReport,
+    Intent,
+    Product,
+    SummaryMetrics,
 )
 
 __all__ = [
     "BotResponse",
     "CustomerQuery",
     "EvaluationResult",
-    "ProductType",
-    "QueryIntent",
+    "ExtractedData",
+    "Intent",
+    "Product",
+    "SummaryMetrics",
+    "FullEvaluationReport",
 ]

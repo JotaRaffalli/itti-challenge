@@ -63,7 +63,7 @@ class PromptService:
             return json.loads(json_str)
         except json.JSONDecodeError as e:
             logger.error(
-                f"Error decoding JSON from response: {e}\\nResponse text: {text}"
+                f"Error decoding JSON from response: {e}\nResponse text: {text}"
             )
             return None
 
@@ -84,11 +84,11 @@ class PromptService:
         """Generate a response to a customer query using the LLM."""
         messages = [
             SystemMessage(content=self.system_prompt),
-            HumanMessage(content=query.message),
+            HumanMessage(content=query.text),
         ]
 
         try:
-            logger.info(f"Sending query to LLM: {query.message}")
+            logger.info(f"Sending query to LLM: {query.text}")
             response = self.llm.invoke(messages)
             content = response.content
 
@@ -104,7 +104,7 @@ class PromptService:
             if not json_data:
                 # Fallback if JSON extraction fails
                 return BotResponse(
-                    original_query=query.message,
+                    original_query=query.text,
                     response_text="No pude procesar la estructura de la respuesta.",
                     reasoning="Fallo en la extracción de JSON.",
                     detected_intent=None,
@@ -118,8 +118,10 @@ class PromptService:
             except Exception as e:
                 logger.error(f"Pydantic validation failed: {e}")
                 return BotResponse(
-                    original_query=query.message,
-                    response_text="La respuesta del modelo no tiene el formato esperado.",
+                    original_query=query.text,
+                    response_text=(
+                        "La respuesta del modelo no tiene el formato esperado."
+                    ),
                     reasoning=f"Error de validación de Pydantic: {e}",
                     detected_intent=None,
                     detected_product=None,
@@ -127,10 +129,13 @@ class PromptService:
                 )
 
             # The user-facing response is now composed of the response and next steps
-            final_response_text = f"{extracted_data.response}\n\n**Próximos Pasos:**\n{extracted_data.next_steps}"
+            final_response_text = (
+                f"{extracted_data.response}\n\n"
+                f"**Próximos Pasos:**\n{extracted_data.next_steps}"
+            )
 
             return BotResponse(
-                original_query=query.message,
+                original_query=query.text,
                 response_text=final_response_text,
                 detected_intent=extracted_data.intent,
                 detected_product=extracted_data.product,
@@ -141,8 +146,10 @@ class PromptService:
         except Exception as e:
             logger.error(f"Error generating response from LLM: {e}", exc_info=True)
             return BotResponse(
-                original_query=query.message,
-                response_text="Lo siento, ocurrió un error inesperado al procesar tu solicitud.",
+                original_query=query.text,
+                response_text=(
+                    "Lo siento, ocurrió un error inesperado al procesar tu solicitud."
+                ),
                 reasoning=f"Excepción: {e}",
                 detected_intent=None,
                 detected_product=None,

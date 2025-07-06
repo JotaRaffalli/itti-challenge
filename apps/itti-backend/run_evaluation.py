@@ -11,8 +11,8 @@ RETRY_DELAY = 5  # seconds
 
 
 def run_evaluation():
-    """Connects to the API and runs the full semantic evaluation."""
-    print("--- Iniciando Evaluación Semántica Completa ---")
+    """Connects to the API and runs the comprehensive evaluation."""
+    print("--- Iniciando Evaluación Comprehensiva ---")
     url = f"{BASE_URL}{EVALUATION_ENDPOINT}"
 
     for attempt in range(MAX_RETRIES):
@@ -30,6 +30,34 @@ def run_evaluation():
 
             # Parse and print the JSON response
             report = response.json()
+
+            # Print summary metrics
+            summary = report.get("summary_metrics", {})
+            print("\n📊 RESUMEN DE MÉTRICAS:")
+            print(f"Total evaluado: {summary.get('total_evaluated', 'N/A')}")
+            print(f"Intent Accuracy: {summary.get('intent_accuracy', 0):.1%}")
+            print(f"Product Accuracy: {summary.get('product_accuracy', 0):.1%}")
+            print(
+                f"Semantic Similarity: "
+                f"{summary.get('average_semantic_similarity', 0):.1%}"
+            )
+            print(f"Confidence: {summary.get('average_confidence', 0):.1%}")
+            print(
+                f"Confidence Alignment: "
+                f"{summary.get('average_confidence_alignment', 0):.1%}"
+            )
+            print("--- Advanced Metrics ---")
+            print(f"Empathy Score: {summary.get('average_empathy', 0):.1%}")
+            print(f"Clarity Score: {summary.get('average_clarity', 0):.1%}")
+            print(f"Actionability Score: {summary.get('average_actionability', 0):.1%}")
+            print(
+                f"Professional Tone Score: "
+                f"{summary.get('average_professional_tone', 0):.1%}"
+            )
+            print(f"Readability Score: {summary.get('average_readability', 0):.1%}")
+
+            # Print detailed report (optional)
+            print("\n📋 REPORTE DETALLADO:")
             print(json.dumps(report, indent=2, ensure_ascii=False))
 
             # Print server logs if available in the response
