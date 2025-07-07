@@ -20,7 +20,7 @@ def get_llm_client() -> BaseChatModel:
     Defaults to 'gemini' if not set.
 
     Supported providers:
-    - 'gemini': Uses Google's Gemini Pro model. Requires GOOGLE_API_KEY.
+    - 'gemini': Uses Google's Gemini Pro model. Requires GEMINI_API_KEY.
     - 'openai': Uses OpenAI's GPT-4 model. Requires OPENAI_API_KEY.
 
     Raises:
@@ -35,9 +35,9 @@ def get_llm_client() -> BaseChatModel:
     model_name = os.getenv(f"{provider.upper()}_MODEL")
 
     if provider == "gemini":
-        api_key = os.getenv("GOOGLE_API_KEY")
+        api_key = os.getenv("GEMINI_API_KEY")
         if not api_key:
-            raise ValueError("GOOGLE_API_KEY environment variable not set.")
+            raise ValueError("GEMINI_API_KEY environment variable not set.")
         return ChatGoogleGenerativeAI(
             model=model_name or "gemini-2.0-flash",
             google_api_key=api_key,

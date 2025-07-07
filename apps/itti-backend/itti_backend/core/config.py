@@ -25,7 +25,7 @@ class Settings(BaseSettings):
 
     # --- LLM Provider Settings ---
     LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "gemini")
-    GEMINI_API_KEY: str = os.getenv("GOOGLE_API_KEY", "")
+    GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
     OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
 
     # --- Model Configuration ---
