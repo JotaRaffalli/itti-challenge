@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
 
     # --- Model Configuration ---
-    GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+    GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
     OPENAI_MODEL: str = os.getenv("OPENAI_MODEL", "gpt-4o")
     TEMPERATURE: float = float(os.getenv("TEMPERATURE", 0.1))
 

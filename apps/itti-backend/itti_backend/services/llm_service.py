@@ -30,12 +30,12 @@ def get_llm_client() -> BaseChatModel:
         An instance of a LangChain chat model
         (e.g., ChatGoogleGenerativeAI or ChatOpenAI).
     """
-    provider = os.environ.get("LLM_PROVIDER", "openai").lower()
+    provider = os.getenv("LLM_PROVIDER", "openai").lower()
     print(f"Using LLM provider: {provider}")
-    model_name = os.environ.get(f"{provider.upper()}_MODEL")
+    model_name = os.getenv(f"{provider.upper()}_MODEL")
 
     if provider == "gemini":
-        api_key = os.environ.get("GOOGLE_API_KEY")
+        api_key = os.getenv("GOOGLE_API_KEY")
         if not api_key:
             raise ValueError("GOOGLE_API_KEY environment variable not set.")
         return ChatGoogleGenerativeAI(
@@ -45,7 +45,7 @@ def get_llm_client() -> BaseChatModel:
 
     elif provider == "openai":
         # Ensure the OpenAI API key is set
-        api_key = os.environ.get("OPENAI_API_KEY")
+        api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
             raise ValueError("OPENAI_API_KEY environment variable not set.")
         return ChatOpenAI(model=model_name or "gpt-4-turbo", api_key=SecretStr(api_key))
